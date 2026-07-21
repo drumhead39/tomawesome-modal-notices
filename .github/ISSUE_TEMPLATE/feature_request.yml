@@ -1,0 +1,55 @@
+name: Feature request
+description: Suggest an improvement for TomAwesome Modal Notices
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting an improvement. Please explain what you would like the plugin to do and how it would help users.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or limitation
+      description: What problem would this feature solve?
+      placeholder: Describe the current limitation or difficulty.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Proposed solution
+      description: Describe how you would like the feature to work.
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Example use case
+      description: Give an example of when or how this feature would be used.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Have you found another way to accomplish this?
+
+  - type: textarea
+    id: additional-information
+    attributes:
+      label: Additional information
+      description: Include any mockups, screenshots, examples, or other helpful details.
+
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirmation
+      options:
+        - label: I checked existing Issues to make sure this feature has not already been requested.
+          required: true

@@ -1,0 +1,86 @@
+name: Bug report
+description: Report a problem with TomAwesome Modal Notices
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting a problem. Please provide as much detail as possible.
+
+        Do not use this form for security vulnerabilities. Report those privately through the repository's Security section.
+
+  - type: input
+    id: plugin-version
+    attributes:
+      label: Plugin version
+      placeholder: "Example: 1.1.2"
+    validations:
+      required: true
+
+  - type: input
+    id: wordpress-version
+    attributes:
+      label: WordPress version
+      placeholder: "Example: 7.0"
+    validations:
+      required: true
+
+  - type: input
+    id: php-version
+    attributes:
+      label: PHP version
+      placeholder: "Example: 8.3"
+    validations:
+      required: true
+
+  - type: input
+    id: theme
+    attributes:
+      label: Active theme
+      placeholder: "Example: Twenty Twenty-Six or Hello Elementor"
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: List the exact steps that cause the problem.
+      placeholder: |
+        1. Open...
+        2. Select...
+        3. Observe...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What happened instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional information
+      description: Include relevant error messages, screenshots, or other details.
+
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirmation
+      options:
+        - label: I checked existing Issues to make sure this problem has not already been reported.
+          required: true
+        - label: This report does not publicly disclose a security vulnerability.
+          required: true

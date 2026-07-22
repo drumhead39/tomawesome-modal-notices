@@ -23,13 +23,22 @@ TomAwesome Modal Notices lets website owners create unlimited modal windows, ban
 
 ## Installation
 
+### Install from WordPress.org
+
+1. In WordPress, open **Plugins → Add New Plugin**.
+2. Search for **TomAwesome Modal Notices**.
+3. Click **Install Now**, then **Activate**.
+4. Open **Modal Notices → Add New**.
+
+The plugin is also available from the [official WordPress.org Plugin Directory](https://wordpress.org/plugins/tomawesome-modal-notices/).
+
+### Manual installation
+
 1. Download the installable ZIP from the GitHub Releases page.
 2. In WordPress, open **Plugins → Add New Plugin → Upload Plugin**.
 3. Select the ZIP and install it.
 4. Activate **TomAwesome Modal Notices**.
 5. Open **Modal Notices → Add New**.
-
-Once approved, the plugin will also be available through the official WordPress.org plugin directory.
 
 ## Privacy
 

@@ -1,5 +1,6 @@
 === TomAwesome Modal Notices ===
 Contributors: TomAwesome
+Donate link: https://ko-fi.com/tomawesome
 Tags: modal, popup, banner, announcement, notice
 Requires at least: 5.9
 Tested up to: 7.1

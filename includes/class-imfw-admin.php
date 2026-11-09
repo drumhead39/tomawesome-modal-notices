@@ -23,6 +23,7 @@ class IMFW_Admin {
 		}
 
 		wp_enqueue_style( 'wp-color-picker' );
+		wp_enqueue_style( 'dashicons' );
 		wp_enqueue_style( 'imfw-admin', IMFW_URL . 'assets/css/admin.css', array(), IMFW_VERSION );
 		wp_enqueue_script( 'imfw-admin', IMFW_URL . 'assets/js/admin.js', array( 'jquery', 'wp-color-picker' ), IMFW_VERSION, true );
 	}
@@ -37,12 +38,20 @@ class IMFW_Admin {
 		return IMFW_Settings::get( $post->ID, $key );
 	}
 
-	private function row( $label, $html, $help = '' ) {
-		echo '<div class="imfw-field"><div class="imfw-field__label">' . esc_html( $label ) . '</div><div class="imfw-field__control">';
+	private function row( $label, $html, $help ) {
+		$tooltip_id = wp_unique_id( 'imfw-tooltip-' );
+
+		/* translators: %s: setting label. */
+		$tooltip_label = sprintf( __( 'Help for %s', 'tomawesome-modal-notices' ), $label );
+
+		echo '<div class="imfw-field"><div class="imfw-field__label"><span>' . esc_html( $label ) . '</span>';
+		echo '<span class="imfw-tooltip">';
+		echo '<button type="button" class="imfw-tooltip__trigger" aria-label="' . esc_attr( $tooltip_label ) . '" aria-describedby="' . esc_attr( $tooltip_id ) . '">';
+		echo '<span class="dashicons dashicons-editor-help" aria-hidden="true"></span>';
+		echo '</button>';
+		echo '<span id="' . esc_attr( $tooltip_id ) . '" class="imfw-tooltip__content" role="tooltip">' . esc_html( $help ) . '</span>';
+		echo '</span></div><div class="imfw-field__control">';
 		echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Constructed from escaped values in the rendering methods.
-		if ( $help ) {
-			echo '<p class="description">' . esc_html( $help ) . '</p>';
-		}
 		echo '</div></div>';
 	}
 
@@ -60,7 +69,8 @@ class IMFW_Admin {
 
 		$this->row(
 			__( 'Status', 'tomawesome-modal-notices' ),
-			'<label><input type="checkbox" name="imfw[enabled]" value="1" ' . checked( $this->value( $post, 'enabled' ), '1', false ) . '> ' . esc_html__( 'Enabled', 'tomawesome-modal-notices' ) . '</label>'
+			'<label><input type="checkbox" name="imfw[enabled]" value="1" ' . checked( $this->value( $post, 'enabled' ), '1', false ) . '> ' . esc_html__( 'Enabled', 'tomawesome-modal-notices' ) . '</label>',
+			__( 'Controls whether this notice can appear on the website. A disabled notice remains saved but is never shown to visitors.', 'tomawesome-modal-notices' )
 		);
 		$this->row(
 			__( 'Open trigger', 'tomawesome-modal-notices' ),
@@ -74,22 +84,23 @@ class IMFW_Admin {
 					'exit'   => __( 'Exit intent', 'tomawesome-modal-notices' ),
 					'click'  => __( 'Element click', 'tomawesome-modal-notices' ),
 				)
-			)
+			),
+			__( 'Chooses what opens the notice: loading the page, waiting, scrolling, desktop exit intent, or clicking a matching element.', 'tomawesome-modal-notices' )
 		);
 		$this->row(
 			__( 'Delay (milliseconds)', 'tomawesome-modal-notices' ),
 			'<input type="number" min="0" max="3600000" step="100" name="imfw[delay]" value="' . esc_attr( $this->value( $post, 'delay' ) ) . '">',
-			__( 'Used only with the “After a delay” trigger. One second equals 1,000 milliseconds.', 'tomawesome-modal-notices' )
+			__( 'Used only with “After a delay.” One second equals 1,000 milliseconds, so 3000 waits three seconds.', 'tomawesome-modal-notices' )
 		);
 		$this->row(
 			__( 'Scroll percentage', 'tomawesome-modal-notices' ),
 			'<input type="number" min="1" max="100" name="imfw[scroll]" value="' . esc_attr( $this->value( $post, 'scroll' ) ) . '">',
-			__( 'The percentage of the page a visitor must scroll before the modal opens.', 'tomawesome-modal-notices' )
+			__( 'Used only with “After scrolling.” Enter 1–100; for example, 50 opens the notice halfway down the page.', 'tomawesome-modal-notices' )
 		);
 		$this->row(
 			__( 'Click CSS selector', 'tomawesome-modal-notices' ),
 			'<input type="text" name="imfw[selector]" value="' . esc_attr( $this->value( $post, 'selector' ) ) . '" placeholder="#open-modal, .my-button">',
-			__( 'Used only with the “Element click” trigger. Enter a valid CSS selector.', 'tomawesome-modal-notices' )
+			__( 'Used only with “Element click.” Enter a valid CSS selector such as #open-modal, .my-button, or multiple selectors separated by commas.', 'tomawesome-modal-notices' )
 		);
 		$this->row(
 			__( 'Position', 'tomawesome-modal-notices' ),
@@ -107,7 +118,8 @@ class IMFW_Admin {
 					'bottom-left'  => __( 'Bottom left', 'tomawesome-modal-notices' ),
 					'bottom-right' => __( 'Bottom right', 'tomawesome-modal-notices' ),
 				)
-			)
+			),
+			__( 'Sets where the notice appears. Top and bottom banners span the window; floating and corner positions stay near the selected edge.', 'tomawesome-modal-notices' )
 		);
 		$this->row(
 			__( 'Opening animation', 'tomawesome-modal-notices' ),
@@ -123,13 +135,19 @@ class IMFW_Admin {
 					'slide-left'  => __( 'Slide left', 'tomawesome-modal-notices' ),
 					'slide-right' => __( 'Slide right', 'tomawesome-modal-notices' ),
 				)
-			)
+			),
+			__( 'Adds entrance motion when the notice opens. Visitors who request reduced motion will not see the animation.', 'tomawesome-modal-notices' )
 		);
 		$this->row(
 			__( 'Close button', 'tomawesome-modal-notices' ),
-			'<label><input type="checkbox" name="imfw[close_x]" value="1" ' . checked( $this->value( $post, 'close_x' ), '1', false ) . '> ' . esc_html__( 'Show close “X”', 'tomawesome-modal-notices' ) . '</label>'
+			'<label><input type="checkbox" name="imfw[close_x]" value="1" ' . checked( $this->value( $post, 'close_x' ), '1', false ) . '> ' . esc_html__( 'Show close “X”', 'tomawesome-modal-notices' ) . '</label>',
+			__( 'Shows an “X” in the upper-right corner. Visitors can also dismiss the notice with Escape or by clicking the overlay.', 'tomawesome-modal-notices' )
 		);
-		$this->row( __( 'Confirm button text', 'tomawesome-modal-notices' ), '<input type="text" name="imfw[confirm_text]" value="' . esc_attr( $this->value( $post, 'confirm_text' ) ) . '">' );
+		$this->row(
+			__( 'Confirm button text', 'tomawesome-modal-notices' ),
+			'<input type="text" name="imfw[confirm_text]" value="' . esc_attr( $this->value( $post, 'confirm_text' ) ) . '">',
+			__( 'Sets the label of the main button, such as “Got it” or “Learn more.” Leave blank to hide the button.', 'tomawesome-modal-notices' )
+		);
 		$this->row(
 			__( 'Confirm action', 'tomawesome-modal-notices' ),
 			$this->select(
@@ -140,9 +158,14 @@ class IMFW_Admin {
 					'url'     => __( 'Open URL in same tab', 'tomawesome-modal-notices' ),
 					'url_new' => __( 'Open URL in new tab', 'tomawesome-modal-notices' ),
 				)
-			)
+			),
+			__( 'Chooses what happens when the visitor selects the confirm button: close the notice or open the Confirm URL.', 'tomawesome-modal-notices' )
 		);
-		$this->row( __( 'Confirm URL', 'tomawesome-modal-notices' ), '<input type="url" name="imfw[confirm_url]" value="' . esc_attr( $this->value( $post, 'confirm_url' ) ) . '" placeholder="https://">' );
+		$this->row(
+			__( 'Confirm URL', 'tomawesome-modal-notices' ),
+			'<input type="url" name="imfw[confirm_url]" value="' . esc_attr( $this->value( $post, 'confirm_url' ) ) . '" placeholder="https://">',
+			__( 'Used only with a URL confirm action. Enter the complete destination beginning with https:// or http://.', 'tomawesome-modal-notices' )
+		);
 		$this->row(
 			__( 'Frequency', 'tomawesome-modal-notices' ),
 			$this->select(
@@ -154,9 +177,14 @@ class IMFW_Admin {
 					'once'    => __( 'Once per visitor', 'tomawesome-modal-notices' ),
 					'days'    => __( 'Repeat after a number of days', 'tomawesome-modal-notices' ),
 				)
-			)
+			),
+			__( 'Limits how often this notice appears in the same browser. Session and visitor rules use browser storage, not a WordPress user account.', 'tomawesome-modal-notices' )
 		);
-		$this->row( __( 'Repeat after days', 'tomawesome-modal-notices' ), '<input type="number" min="1" max="3650" name="imfw[repeat_days]" value="' . esc_attr( $this->value( $post, 'repeat_days' ) ) . '">' );
+		$this->row(
+			__( 'Repeat after days', 'tomawesome-modal-notices' ),
+			'<input type="number" min="1" max="3650" name="imfw[repeat_days]" value="' . esc_attr( $this->value( $post, 'repeat_days' ) ) . '">',
+			__( 'Used only with “Repeat after a number of days.” The notice becomes eligible again after this many full days.', 'tomawesome-modal-notices' )
+		);
 		$this->row(
 			__( 'Frequency scope', 'tomawesome-modal-notices' ),
 			$this->select(
@@ -166,14 +194,19 @@ class IMFW_Admin {
 					'site' => __( 'Across the website', 'tomawesome-modal-notices' ),
 					'page' => __( 'Separately for each page', 'tomawesome-modal-notices' ),
 				)
-			)
+			),
+			__( 'Controls whether the frequency limit applies once across the whole website or starts a separate count for each page.', 'tomawesome-modal-notices' )
 		);
 		$this->row(
 			__( 'Start date/time', 'tomawesome-modal-notices' ),
 			'<input type="datetime-local" name="imfw[start]" value="' . esc_attr( $this->value( $post, 'start' ) ) . '">',
-			__( 'Uses the timezone selected in WordPress Settings.', 'tomawesome-modal-notices' )
+			__( 'The notice will not appear before this date and time. Leave blank to start immediately. Uses the timezone in WordPress Settings.', 'tomawesome-modal-notices' )
 		);
-		$this->row( __( 'End date/time', 'tomawesome-modal-notices' ), '<input type="datetime-local" name="imfw[end]" value="' . esc_attr( $this->value( $post, 'end' ) ) . '">' );
+		$this->row(
+			__( 'End date/time', 'tomawesome-modal-notices' ),
+			'<input type="datetime-local" name="imfw[end]" value="' . esc_attr( $this->value( $post, 'end' ) ) . '">',
+			__( 'The notice stops appearing after this date and time. Leave blank for no expiration. Uses the timezone in WordPress Settings.', 'tomawesome-modal-notices' )
+		);
 
 		echo '</div>';
 	}
@@ -193,7 +226,8 @@ class IMFW_Admin {
 					'taxonomy'   => __( 'Taxonomies and matching content', 'tomawesome-modal-notices' ),
 					'archives'   => __( 'All archive pages', 'tomawesome-modal-notices' ),
 				)
-			)
+			),
+			__( 'Chooses which part of the website can show this notice. The related fields below are used only when their matching mode is selected.', 'tomawesome-modal-notices' )
 		);
 
 		$checks   = '';
@@ -202,21 +236,25 @@ class IMFW_Admin {
 		foreach ( $post_types as $type ) {
 			$checks .= '<label><input type="checkbox" name="imfw[post_types][]" value="' . esc_attr( $type->name ) . '" ' . checked( in_array( $type->name, $selected, true ), true, false ) . '> ' . esc_html( $type->labels->singular_name ) . '</label> ';
 		}
-		$this->row( __( 'Post types', 'tomawesome-modal-notices' ), $checks );
+		$this->row(
+			__( 'Post types', 'tomawesome-modal-notices' ),
+			$checks,
+			__( 'Used only with “Selected post types.” The notice appears on individual items belonging to any checked public post type.', 'tomawesome-modal-notices' )
+		);
 		$this->row(
 			__( 'Include content IDs', 'tomawesome-modal-notices' ),
 			'<input type="text" name="imfw[include_ids]" value="' . esc_attr( $this->value( $post, 'include_ids' ) ) . '" placeholder="12, 34, 56">',
-			__( 'Comma-separated page, post, or custom post IDs.', 'tomawesome-modal-notices' )
+			__( 'Used only with “Selected content.” Enter comma-separated page, post, or custom post IDs, such as 12, 34, 56.', 'tomawesome-modal-notices' )
 		);
 		$this->row(
 			__( 'Exclude content IDs', 'tomawesome-modal-notices' ),
 			'<input type="text" name="imfw[exclude_ids]" value="' . esc_attr( $this->value( $post, 'exclude_ids' ) ) . '" placeholder="78, 90">',
-			__( 'Exclusions override all inclusion rules on singular content.', 'tomawesome-modal-notices' )
+			__( 'Enter comma-separated content IDs that must never show this notice. Exclusions override all inclusion rules on individual content.', 'tomawesome-modal-notices' )
 		);
 		$this->row(
 			__( 'Taxonomy rules', 'tomawesome-modal-notices' ),
 			'<textarea name="imfw[tax_rules]" rows="4" placeholder="category:news,offers&#10;post_tag:featured">' . esc_textarea( $this->value( $post, 'tax_rules' ) ) . '</textarea>',
-			__( 'One taxonomy per line using taxonomy:term-slug,term-slug. Matches archives and singular content assigned to a term.', 'tomawesome-modal-notices' )
+			__( 'Used only with “Taxonomies and matching content.” Add one taxonomy per line, for example category:news,offers or post_tag:featured.', 'tomawesome-modal-notices' )
 		);
 		echo '</div>';
 	}
@@ -224,34 +262,82 @@ class IMFW_Admin {
 	public function design_box( $post ) {
 		echo '<div class="imfw-grid">';
 		$fields = array(
-			'width'       => array( __( 'Width', 'tomawesome-modal-notices' ), '90%' ),
-			'max_width'   => array( __( 'Maximum width', 'tomawesome-modal-notices' ), '600px' ),
-			'padding'     => array( __( 'Padding', 'tomawesome-modal-notices' ), '28px' ),
-			'radius'      => array( __( 'Corner radius', 'tomawesome-modal-notices' ), '8px' ),
-			'font_size'   => array( __( 'Font size', 'tomawesome-modal-notices' ), '16px' ),
-			'font_family' => array( __( 'Font family', 'tomawesome-modal-notices' ), 'inherit' ),
+			'width'       => array(
+				__( 'Width', 'tomawesome-modal-notices' ),
+				'90%',
+				__( 'Sets the notice width using a CSS value such as 90%, 420px, or 30rem. Top and bottom banners always span the window.', 'tomawesome-modal-notices' ),
+			),
+			'max_width'   => array(
+				__( 'Maximum width', 'tomawesome-modal-notices' ),
+				'600px',
+				__( 'Caps the width on larger screens using a CSS value such as 600px. Top and bottom banners do not use this limit.', 'tomawesome-modal-notices' ),
+			),
+			'padding'     => array(
+				__( 'Padding', 'tomawesome-modal-notices' ),
+				'28px',
+				__( 'Controls the space between the notice content and its edges. Enter a CSS value such as 28px or 1.5rem.', 'tomawesome-modal-notices' ),
+			),
+			'radius'      => array(
+				__( 'Corner radius', 'tomawesome-modal-notices' ),
+				'8px',
+				__( 'Controls corner rounding. Use 0 for square corners or a CSS value such as 8px. Banners keep square corners.', 'tomawesome-modal-notices' ),
+			),
+			'font_size'   => array(
+				__( 'Font size', 'tomawesome-modal-notices' ),
+				'16px',
+				__( 'Sets the base text size inside the notice using a CSS value such as 16px, 1rem, or 110%.', 'tomawesome-modal-notices' ),
+			),
+			'font_family' => array(
+				__( 'Font family', 'tomawesome-modal-notices' ),
+				'inherit',
+				__( 'Sets the CSS font family for the notice. Use inherit to match the website, or enter a font stack such as Arial, sans-serif.', 'tomawesome-modal-notices' ),
+			),
 		);
 		foreach ( $fields as $key => $data ) {
-			$this->row( $data[0], '<input type="text" name="imfw[' . esc_attr( $key ) . ']" value="' . esc_attr( $this->value( $post, $key ) ) . '" placeholder="' . esc_attr( $data[1] ) . '">' );
+			$this->row( $data[0], '<input type="text" name="imfw[' . esc_attr( $key ) . ']" value="' . esc_attr( $this->value( $post, $key ) ) . '" placeholder="' . esc_attr( $data[1] ) . '">', $data[2] );
 		}
 
 		$colors = array(
-			'bg'                => __( 'Background color', 'tomawesome-modal-notices' ),
-			'text_color'        => __( 'Text color', 'tomawesome-modal-notices' ),
-			'overlay'           => __( 'Overlay color', 'tomawesome-modal-notices' ),
-			'button_bg'         => __( 'Button background', 'tomawesome-modal-notices' ),
-			'button_text'       => __( 'Button text', 'tomawesome-modal-notices' ),
-			'button_border'     => __( 'Button border', 'tomawesome-modal-notices' ),
-			'button_hover_bg'   => __( 'Button hover background', 'tomawesome-modal-notices' ),
-			'button_hover_text' => __( 'Button hover text', 'tomawesome-modal-notices' ),
+			'bg'                => array(
+				__( 'Background color', 'tomawesome-modal-notices' ),
+				__( 'Sets the background color of the notice panel.', 'tomawesome-modal-notices' ),
+			),
+			'text_color'        => array(
+				__( 'Text color', 'tomawesome-modal-notices' ),
+				__( 'Sets the default color of the notice text and close icon.', 'tomawesome-modal-notices' ),
+			),
+			'overlay'           => array(
+				__( 'Overlay color', 'tomawesome-modal-notices' ),
+				__( 'Sets the color behind the notice. Use rgba(), such as rgba(0,0,0,.55), to control transparency.', 'tomawesome-modal-notices' ),
+			),
+			'button_bg'         => array(
+				__( 'Button background', 'tomawesome-modal-notices' ),
+				__( 'Sets the normal background color of the confirm button.', 'tomawesome-modal-notices' ),
+			),
+			'button_text'       => array(
+				__( 'Button text', 'tomawesome-modal-notices' ),
+				__( 'Sets the normal text color of the confirm button.', 'tomawesome-modal-notices' ),
+			),
+			'button_border'     => array(
+				__( 'Button border', 'tomawesome-modal-notices' ),
+				__( 'Sets the border color around the confirm button.', 'tomawesome-modal-notices' ),
+			),
+			'button_hover_bg'   => array(
+				__( 'Button hover background', 'tomawesome-modal-notices' ),
+				__( 'Sets the confirm button background when a visitor hovers over it or focuses it with a keyboard.', 'tomawesome-modal-notices' ),
+			),
+			'button_hover_text' => array(
+				__( 'Button hover text', 'tomawesome-modal-notices' ),
+				__( 'Sets the confirm button text color when a visitor hovers over it or focuses it with a keyboard.', 'tomawesome-modal-notices' ),
+			),
 		);
-		foreach ( $colors as $key => $label ) {
-			$this->row( $label, '<input class="imfw-color" type="text" name="imfw[' . esc_attr( $key ) . ']" value="' . esc_attr( $this->value( $post, $key ) ) . '">' );
+		foreach ( $colors as $key => $data ) {
+			$this->row( $data[0], '<input class="imfw-color" type="text" name="imfw[' . esc_attr( $key ) . ']" value="' . esc_attr( $this->value( $post, $key ) ) . '">', $data[1] );
 		}
 		$this->row(
 			__( 'Custom CSS class', 'tomawesome-modal-notices' ),
 			'<input type="text" name="imfw[custom_class]" value="' . esc_attr( $this->value( $post, 'custom_class' ) ) . '" placeholder="my-modal">',
-			__( 'Added to this modal only. Use your theme stylesheet for advanced styling.', 'tomawesome-modal-notices' )
+			__( 'Adds one CSS class to this notice only. Enter the class name without a leading period, then style it in your theme stylesheet.', 'tomawesome-modal-notices' )
 		);
 		echo '</div>';
 	}

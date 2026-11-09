@@ -12,13 +12,14 @@ TomAwesome Modal Notices lets website owners create unlimited modal windows, ban
 - Visitor frequency controls
 - Center, banner, side, and corner placement
 - Custom colors, dimensions, typography, and animations
+- In-editor help tooltips for every modal setting
 - Accessible keyboard and focus management
 - No advertising, telemetry, or external-service requests
 
 ## Requirements
 
 - WordPress 5.9 or newer
-- Tested through WordPress 7.0
+- Tested through WordPress 7.1
 - PHP 7.4 or newer
 
 ## Installation
@@ -56,4 +57,4 @@ TomAwesome Modal Notices is licensed under the GNU General Public License v2.0 o
 
 ## Current release
 
-Version 1.1.2
+Version 1.2.0

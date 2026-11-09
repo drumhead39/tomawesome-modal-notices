@@ -5,7 +5,7 @@ Tags: modal, popup, banner, announcement, notice
 Requires at least: 5.9
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.1.2
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -50,6 +50,7 @@ Create the displayed message with the familiar WordPress editor, then choose whe
 * Responsive dimensions, padding, colors, typography, and button hover colors
 * Fade, scale, and directional slide animations
 * Optional close button and customizable confirmation button
+* Built-in tooltips explain every modal setting without leaving the editor
 * Keyboard focus management, focus trapping, Escape-to-close, dialog semantics, and reduced-motion support
 
 The plugin loads its frontend CSS and JavaScript only when at least one published modal matches the current request. It creates no custom database tables, contains no advertising, and makes no requests to external services.
@@ -107,6 +108,11 @@ The plugin adds suggested disclosure text to the WordPress Privacy Policy Guide.
 
 == Changelog ==
 
+= 1.2.0 =
+* Added concise help tooltips to every setting in the modal editor.
+* Made tooltips available by mouse, keyboard, and touch with responsive mobile presentation.
+* Added practical examples for timing, targeting, CSS values, colors, and frequency behavior.
+
 = 1.1.2 =
 * Renamed the plugin and directory identity to TomAwesome Modal Notices with the requested slug tomawesome-modal-notices.
 * Preserved the existing modal content type, settings, extension hooks, styles, and browser storage keys for seamless migration.
@@ -132,5 +138,5 @@ The plugin adds suggested disclosure text to the WordPress Privacy Policy Guide.
 
 == Upgrade Notice ==
 
-= 1.1.2 =
-Public plugin name and directory identity updated while preserving existing modal data and settings.
+= 1.2.0 =
+Adds accessible in-editor help for every modal setting.

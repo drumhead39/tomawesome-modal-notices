@@ -13,6 +13,7 @@ TomAwesome Modal Notices lets website owners create unlimited modal windows, ban
 - Center, banner, side, and corner placement
 - Custom colors, dimensions, typography, and animations
 - In-editor help tooltips for every modal setting
+- Live in-editor preview of modal content and visual settings
 - Accessible keyboard and focus management
 - No advertising, telemetry, or external-service requests
 
@@ -57,4 +58,4 @@ TomAwesome Modal Notices is licensed under the GNU General Public License v2.0 o
 
 ## Current release
 
-Version 1.2.0
+Version 1.3.0

@@ -26,6 +26,13 @@ class IMFW_Admin {
 		wp_enqueue_style( 'dashicons' );
 		wp_enqueue_style( 'imfw-admin', IMFW_URL . 'assets/css/admin.css', array(), IMFW_VERSION );
 		wp_enqueue_script( 'imfw-admin', IMFW_URL . 'assets/js/admin.js', array( 'jquery', 'wp-color-picker' ), IMFW_VERSION, true );
+		wp_localize_script(
+			'imfw-admin',
+			'IMFW_ADMIN_PREVIEW',
+			array(
+				'emptyContent' => __( 'Your modal content will appear here.', 'tomawesome-modal-notices' ),
+			)
+		);
 	}
 
 	public function add_meta_boxes() {
@@ -340,6 +347,27 @@ class IMFW_Admin {
 			__( 'Adds one CSS class to this notice only. Enter the class name without a leading period, then style it in your theme stylesheet.', 'tomawesome-modal-notices' )
 		);
 		echo '</div>';
+		$this->preview_box();
+	}
+
+	private function preview_box() {
+		echo '<section class="imfw-preview" aria-labelledby="imfw-preview-title">';
+		echo '<div class="imfw-preview__header">';
+		echo '<h3 id="imfw-preview-title">' . esc_html__( 'Live preview', 'tomawesome-modal-notices' ) . '</h3>';
+		echo '<button type="button" class="button button-secondary imfw-preview__replay" data-imfw-preview-replay>';
+		echo '<span class="dashicons dashicons-controls-repeat" aria-hidden="true"></span> ' . esc_html__( 'Replay animation', 'tomawesome-modal-notices' );
+		echo '</button>';
+		echo '</div>';
+		echo '<div class="imfw-preview__stage imfw-preview-place-center imfw-preview-anim-fade" data-imfw-preview-stage role="img" aria-label="' . esc_attr__( 'Live visual preview of this modal notice', 'tomawesome-modal-notices' ) . '">';
+		echo '<div class="imfw-preview__visual" aria-hidden="true" inert>';
+		echo '<div class="imfw-preview__overlay"></div>';
+		echo '<div class="imfw-preview__dialog">';
+		echo '<span class="imfw-preview__close" data-imfw-preview-close>&times;</span>';
+		echo '<div class="imfw-preview__content" data-imfw-preview-content></div>';
+		echo '<button type="button" class="imfw-preview__confirm" data-imfw-preview-confirm tabindex="-1"></button>';
+		echo '</div></div></div>';
+		echo '<p class="description">' . esc_html__( 'The preview updates as you edit. Shortcodes, theme styles, and page-builder styles may look different on the live website.', 'tomawesome-modal-notices' ) . '</p>';
+		echo '</section>';
 	}
 
 	public function save( $post_id ) {

@@ -3,7 +3,7 @@
  * Plugin Name:       TomAwesome Modal Notices
  * Plugin URI:        https://wordpress.org/plugins/tomawesome-modal-notices/
  * Description:       Create responsive, accessible information modals with flexible targeting, triggers, scheduling, and frequency controls.
- * Version:           1.2.0
+ * Version:           1.3.0
  * Requires at least: 5.9
  * Requires PHP:      7.4
  * Author:            Thomas Clark
@@ -14,7 +14,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'IMFW_VERSION', '1.2.0' );
+define( 'IMFW_VERSION', '1.3.0' );
 define( 'IMFW_FILE', __FILE__ );
 define( 'IMFW_DIR', plugin_dir_path( __FILE__ ) );
 define( 'IMFW_URL', plugin_dir_url( __FILE__ ) );

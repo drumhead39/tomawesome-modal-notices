@@ -71,9 +71,13 @@ class IMFW_Settings {
 	public static function get( $modal_id, $key ) {
 		$defaults = self::defaults();
 		$default  = array_key_exists( $key, $defaults ) ? $defaults[ $key ] : '';
-		$value    = get_post_meta( $modal_id, '_imfw_' . $key, true );
+		$meta_key = '_imfw_' . $key;
 
-		return '' === $value ? $default : $value;
+		if ( ! metadata_exists( 'post', $modal_id, $meta_key ) ) {
+			return $default;
+		}
+
+		return get_post_meta( $modal_id, $meta_key, true );
 	}
 
 	/**

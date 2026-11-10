@@ -113,6 +113,7 @@ The plugin adds suggested disclosure text to the WordPress Privacy Policy Guide.
 * Added a contained live preview below the Design settings.
 * Preview modal content, position, animation, dimensions, typography, colors, close icon, and confirmation button while editing.
 * Added an animation replay control and responsive preview layout.
+* Fixed blank confirmation-button text so leaving the field empty reliably hides the button.
 
 = 1.2.0 =
 * Added concise help tooltips to every setting in the modal editor.

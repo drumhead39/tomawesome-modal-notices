@@ -61,6 +61,12 @@ jobs:
           wp plugin status "$PLUGIN_SLUG" --path="$site"
           wp eval 'if (!defined(getenv("BOOTSTRAP_CONSTANT"))) { throw new RuntimeException("Plugin bootstrap constant missing"); } echo "Plugin bootstrap loaded successfully\n";' --path="$site"
           wp eval 'echo "WordPress version: " . get_bloginfo("version") . "\n";' --path="$site"
+      - name: Exercise Modal Notices post type and frontend fixture
+        run: |
+          set -euo pipefail
+          site="$RUNNER_TEMP/wp72"
+          wp eval 'if (!post_type_exists("imfw_modal")) { throw new RuntimeException("Modal post type is missing"); }' --path="$site"
+          wp post create --post_type=imfw_modal --post_title='Compatibility notice' --post_content='wp72-modal-rendered-fixture' --post_status=publish --porcelain --path="$site"
       - name: Frontend HTTP smoke
         run: |
           set -euo pipefail
@@ -69,7 +75,8 @@ jobs:
           server_pid=$!
           trap 'kill "$server_pid" 2>/dev/null || true' EXIT
           for attempt in 1 2 3 4 5; do
-            if curl --fail --silent --show-error --max-time 10 http://127.0.0.1:8877/ -o /dev/null; then
+            if curl --fail --silent --show-error --max-time 10 http://127.0.0.1:8877/ -o "$RUNNER_TEMP/home.html"; then
+          grep -q 'wp72-modal-rendered-fixture' "$RUNNER_TEMP/home.html"
               exit 0
             fi
             sleep 2
